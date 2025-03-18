@@ -6,27 +6,25 @@ class CustomNet(nn.Module):
     def __init__(self):
         super(CustomNet, self).__init__()
         # Define layers of the neural network
-
-        # Add more layers...
-        self.linear_relu_stack = nn.Sequential( #224
-          nn.Conv2d(3, 64, kernel_size=3, padding=1, stride = 2),  #112 dimensioni della matrice singola
+        self.linear_relu_stack = nn.Sequential(
+          nn.Conv2d(3, 16, kernel_size=3, padding=1, stride=2), # 112
+          nn.BatchNorm2d(num_features=16),
+          nn.LeakyReLU(),
+          nn.Conv2d(16, 32, kernel_size=3, padding=1, stride=2), # 56
+          nn.BatchNorm2d(num_features=32),
+          nn.LeakyReLU(),
+          nn.Conv2d(32, 64, kernel_size=3, padding=1, stride=2), # 28
           nn.BatchNorm2d(num_features=64),
-          nn.ReLU(),
-          nn.Conv2d(64, 128, kernel_size=3, padding=1, stride = 2), #56
+          nn.LeakyReLU(),
+          nn.Conv2d(64, 128, kernel_size=3, padding=1),
           nn.BatchNorm2d(num_features=128),
-          nn.ReLU(),
-          nn.Conv2d(128, 256, kernel_size=3, padding=1, stride=2), #28
+          nn.LeakyReLU(),
+          nn.Conv2d(128, 256, kernel_size=3, padding=1),
           nn.BatchNorm2d(num_features=256),
-          nn.ReLU(),
-          nn.Conv2d(256, 512, kernel_size=3, padding=1, stride=2), #14
-          nn.BatchNorm2d(num_features=512),
-          nn.ReLU(),
-          nn.Conv2d(512, 1024, kernel_size=3, padding=1, stride=2), #7
-          nn.BatchNorm2d(num_features=1024),
-          nn.ReLU(),
-          nn.Flatten(), # linearizza 1 x 7
-          # 1024: output del conv2d, 7: le dimensioni dell'immagine, 2: perché 2d
-          nn.Linear(1024*7**2, 200),  # 200 output classes
+          nn.LeakyReLU(),
+          nn.AvgPool2d(4, 4), # Add a max pooling layer
+          nn.Flatten(),
+          nn.Linear(256*7**2, 200),  # 200 output classes
         )
 
     def forward(self, x):
